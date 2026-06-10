@@ -1,0 +1,243 @@
+<!-- This file shows a dashboard-first UI idea. Edit it when the dashboard layout changes; copy it to sketch another app layout. -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Code Clash Design 1 - Dashboard First</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f7fb;
+        --panel: #ffffff;
+        --line: #d9deea;
+        --text: #172033;
+        --muted: #5f6d84;
+        --primary: #2364aa;
+        --accent: #1b998b;
+        --danger: #c44536;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+        padding: 14px 24px;
+      }
+
+      nav {
+        display: flex;
+        gap: 10px;
+      }
+
+      nav a,
+      button {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #ffffff;
+        color: var(--text);
+        cursor: pointer;
+        font: inherit;
+        padding: 8px 12px;
+        text-decoration: none;
+      }
+
+      .primary {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #ffffff;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.8fr);
+        gap: 20px;
+        padding: 24px;
+      }
+
+      .intro {
+        grid-column: 1 / -1;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 20px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 16px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      p,
+      li {
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        border-bottom: 1px solid var(--line);
+        padding: 10px 8px;
+        text-align: left;
+      }
+
+      .status {
+        border-radius: 999px;
+        display: inline-block;
+        font-size: 13px;
+        padding: 4px 8px;
+      }
+
+      .running {
+        background: #e6f4f1;
+        color: #0e665b;
+      }
+
+      .waiting {
+        background: #fff4d6;
+        color: #795700;
+      }
+
+      @media (max-width: 820px) {
+        header,
+        nav {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        main,
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>Code Clash</strong>
+      <nav aria-label="Main navigation">
+        <a href="#dashboard">Dashboard</a>
+        <a href="#bots">Bots</a>
+        <a href="#tournaments">Tournaments</a>
+        <a href="#replays">Replays</a>
+        <button class="primary">Log in</button>
+      </nav>
+    </header>
+
+    <main id="dashboard">
+      <section class="intro" aria-labelledby="intro-title">
+        <h1 id="intro-title">Program a bot, join a tournament, and watch it compete.</h1>
+        <p>
+          This layout starts with the most important live information: rankings, tournament status,
+          recent matches, and clear next actions for students.
+        </p>
+        <button class="primary">Create bot</button>
+        <button>Join tournament</button>
+      </section>
+
+      <section class="panel" aria-labelledby="leaderboard-title">
+        <h2 id="leaderboard-title">Leaderboard</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Bot</th>
+              <th>Elo</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>NorthStar.py</td>
+              <td>1218</td>
+            </tr>
+            <tr>
+              <td>2</td>
+              <td>FastSnake.cpp</td>
+              <td>1196</td>
+            </tr>
+            <tr>
+              <td>3</td>
+              <td>CarefulBot.py</td>
+              <td>1170</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <aside class="panel" aria-labelledby="actions-title">
+        <h2 id="actions-title">Quick Actions</h2>
+        <p>Students can move straight to the next task without searching through menus.</p>
+        <button class="primary">Upload bot version</button>
+        <button>Create tournament</button>
+        <button>Open latest replay</button>
+      </aside>
+
+      <section class="panel" aria-labelledby="tournament-title">
+        <h2 id="tournament-title">Active Tournaments</h2>
+        <div class="grid">
+          <article class="panel">
+            <h3>Lunch League</h3>
+            <p><span class="status running">Running</span></p>
+            <p>12 matches complete. Next match starts soon.</p>
+            <button>View</button>
+          </article>
+          <article class="panel">
+            <h3>Beginner Cup</h3>
+            <p><span class="status waiting">Waiting</span></p>
+            <p>4 bots joined. Needs 2 more bots.</p>
+            <button>Enter bot</button>
+          </article>
+          <article class="panel">
+            <h3>Friday Finals</h3>
+            <p><span class="status waiting">Open</span></p>
+            <p>Created by a student. Start is available after joining.</p>
+            <button>View</button>
+          </article>
+        </div>
+      </section>
+
+      <aside class="panel" aria-labelledby="recent-title">
+        <h2 id="recent-title">Recent Matches</h2>
+        <ul>
+          <li>NorthStar.py beat CarefulBot.py in 38 turns.</li>
+          <li>FastSnake.cpp won a tie-breaker replay.</li>
+          <li>Three bots crashed because of invalid output.</li>
+        </ul>
+      </aside>
+    </main>
+  </body>
+</html>

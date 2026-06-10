@@ -1,0 +1,200 @@
+<!-- This file shows a guided student-flow UI idea. Edit it when the onboarding flow changes; copy it to sketch another guided flow. -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Code Clash Design 2 - Guided Student Flow</title>
+    <style>
+      :root {
+        --bg: #fbfbf7;
+        --panel: #ffffff;
+        --line: #d8d2c4;
+        --text: #1f2a2e;
+        --muted: #667174;
+        --primary: #2f6f73;
+        --accent: #b85937;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      header {
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+        padding: 18px 28px;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: 260px minmax(0, 1fr);
+        min-height: calc(100vh - 65px);
+      }
+
+      aside {
+        border-right: 1px solid var(--line);
+        background: #f4f1ea;
+        padding: 24px;
+      }
+
+      .step {
+        border-left: 4px solid var(--line);
+        margin-bottom: 18px;
+        padding: 4px 0 4px 12px;
+      }
+
+      .active {
+        border-left-color: var(--primary);
+        color: var(--primary);
+        font-weight: 700;
+      }
+
+      .content {
+        padding: 28px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        margin-bottom: 18px;
+        padding: 18px;
+      }
+
+      label {
+        display: block;
+        font-weight: 700;
+        margin: 12px 0 6px;
+      }
+
+      input,
+      select,
+      textarea {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        font: inherit;
+        padding: 10px;
+        width: 100%;
+      }
+
+      textarea {
+        min-height: 150px;
+      }
+
+      button {
+        border: 1px solid var(--primary);
+        border-radius: 6px;
+        background: #ffffff;
+        color: var(--primary);
+        cursor: pointer;
+        font: inherit;
+        padding: 9px 13px;
+      }
+
+      .primary {
+        background: var(--primary);
+        color: #ffffff;
+      }
+
+      h1,
+      h2,
+      p {
+        margin-top: 0;
+      }
+
+      p,
+      small {
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      code,
+      pre {
+        background: #f3f5f5;
+        border-radius: 6px;
+      }
+
+      pre {
+        overflow: auto;
+        padding: 12px;
+      }
+
+      @media (max-width: 760px) {
+        main {
+          grid-template-columns: 1fr;
+        }
+
+        aside {
+          border-bottom: 1px solid var(--line);
+          border-right: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>Code Clash</strong>
+    </header>
+
+    <main>
+      <aside aria-label="Student progress">
+        <div class="step active">1. Create a bot</div>
+        <div class="step">2. Upload code</div>
+        <div class="step">3. Join tournament</div>
+        <div class="step">4. Watch replay</div>
+      </aside>
+
+      <section class="content" aria-labelledby="page-title">
+        <h1 id="page-title">Build your first Snake bot</h1>
+        <p>
+          This layout is best for beginners because it turns the app into a clear sequence of tasks.
+        </p>
+
+        <section class="panel" aria-labelledby="bot-title">
+          <h2 id="bot-title">Bot Details</h2>
+          <label for="bot-name">Bot name</label>
+          <input id="bot-name" value="My First Snake Bot" />
+
+          <label for="language">Language</label>
+          <select id="language">
+            <option>Python</option>
+            <option>C++</option>
+          </select>
+
+          <label for="source">Source code</label>
+          <textarea id="source">import sys&#10;print("RIGHT")</textarea>
+
+          <p>
+            The bot reads one JSON game state from stdin each turn and prints one move:
+            <code>UP</code>, <code>DOWN</code>, <code>LEFT</code>, or <code>RIGHT</code>.
+          </p>
+
+          <button class="primary">Upload version</button>
+        </section>
+
+        <section class="panel" aria-labelledby="state-title">
+          <h2 id="state-title">Game State Example</h2>
+          <pre>{
+  "game": "snake",
+  "turn": 12,
+  "you": 4,
+  "width": 15,
+  "height": 15,
+  "food": [7, 3],
+  "snakes": [
+    { "id": 4, "alive": true, "body": [[2, 2], [1, 2]] }
+  ]
+}</pre>
+        </section>
+      </section>
+    </main>
+  </body>
+</html>

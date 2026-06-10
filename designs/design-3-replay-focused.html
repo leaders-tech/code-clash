@@ -1,0 +1,211 @@
+<!-- This file shows a replay-focused UI idea. Edit it when replay viewing changes; copy it to sketch another viewer layout. -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Code Clash Design 3 - Replay Focused</title>
+    <style>
+      :root {
+        --bg: #eef3f8;
+        --panel: #ffffff;
+        --line: #cbd7e3;
+        --text: #13212e;
+        --muted: #5e6c78;
+        --primary: #3858e9;
+        --green: #37a169;
+        --red: #d64545;
+        --yellow: #e0a82e;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--text);
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid var(--line);
+        background: var(--panel);
+        padding: 14px 22px;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: minmax(360px, 1fr) 320px;
+        gap: 18px;
+        padding: 22px;
+      }
+
+      .panel {
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--panel);
+        padding: 16px;
+      }
+
+      .arena {
+        aspect-ratio: 1;
+        display: grid;
+        gap: 3px;
+        grid-template-columns: repeat(12, 1fr);
+        margin: 12px auto;
+        max-width: 620px;
+      }
+
+      .cell {
+        border: 1px solid #dce5ee;
+        background: #f8fafc;
+        min-width: 0;
+      }
+
+      .snake-a {
+        background: var(--green);
+      }
+
+      .snake-b {
+        background: var(--primary);
+      }
+
+      .food {
+        background: var(--yellow);
+      }
+
+      .danger {
+        background: var(--red);
+      }
+
+      .controls {
+        align-items: center;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      button,
+      select {
+        border: 1px solid var(--line);
+        border-radius: 6px;
+        background: #ffffff;
+        color: var(--text);
+        font: inherit;
+        padding: 8px 11px;
+      }
+
+      .primary {
+        border-color: var(--primary);
+        background: var(--primary);
+        color: #ffffff;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin-top: 0;
+      }
+
+      p,
+      li {
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .action {
+        border-bottom: 1px solid var(--line);
+        padding: 10px 0;
+      }
+
+      @media (max-width: 840px) {
+        header {
+          align-items: flex-start;
+          flex-direction: column;
+          gap: 10px;
+        }
+
+        main {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <strong>Code Clash Replay</strong>
+      <div>
+        <button>Back to tournament</button>
+        <button class="primary">Open match</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="panel" aria-labelledby="replay-title">
+        <h1 id="replay-title">Snake Match Replay</h1>
+        <p>Replay-first design puts the game board at the center and keeps analysis beside it.</p>
+
+        <div class="arena" aria-label="Snake replay board">
+          <div class="cell"></div><div class="cell"></div><div class="cell food"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell snake-a"></div><div class="cell snake-a"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell snake-b"></div><div class="cell snake-b"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div><div class="cell snake-a"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell snake-b"></div><div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell food"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell danger"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell food"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+          <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+        </div>
+
+        <div class="controls" aria-label="Replay controls">
+          <button>First</button>
+          <button>Back</button>
+          <button class="primary">Play</button>
+          <button>Next</button>
+          <label>
+            Speed
+            <select>
+              <option>1x</option>
+              <option>2x</option>
+              <option>4x</option>
+            </select>
+          </label>
+        </div>
+      </section>
+
+      <aside class="panel" aria-labelledby="actions-title">
+        <h2 id="actions-title">Turn 24 Actions</h2>
+        <div class="action">
+          <h3>NorthStar.py</h3>
+          <p>Move: RIGHT. Ate food and grew by 1.</p>
+        </div>
+        <div class="action">
+          <h3>FastSnake.cpp</h3>
+          <p>Move: UP. Avoided a wall collision.</p>
+        </div>
+        <div class="action">
+          <h3>CarefulBot.py</h3>
+          <p>Move: LEFT. Died by body collision.</p>
+        </div>
+
+        <h2>Match Details</h2>
+        <ul>
+          <li>Seed: 930214</li>
+          <li>Map: 15 by 15</li>
+          <li>Time limit: 100 ms per turn</li>
+          <li>Winner: NorthStar.py</li>
+        </ul>
+      </aside>
+    </main>
+  </body>
+</html>
