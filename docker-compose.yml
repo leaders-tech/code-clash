@@ -12,7 +12,11 @@ services:
       APP_PORT: 8081
       DB_PATH: ${DB_PATH}
       COOKIE_SECRET: ${COOKIE_SECRET}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
       FRONTEND_ORIGIN: ${FRONTEND_ORIGIN}
+      BOT_RUNNER_IMAGE: ${BOT_RUNNER_IMAGE}
+      BOT_RUNNER_CONTAINER_NAME: ${BOT_RUNNER_CONTAINER_NAME}
     expose:
       - "8081"
     labels:
@@ -20,6 +24,15 @@ services:
     restart: unless-stopped
     volumes:
       - sqlite_data:/data
+      - /var/run/docker.sock:/var/run/docker.sock
+
+  bot-runner:
+    build:
+      context: .
+      dockerfile: runner/Dockerfile
+    image: ${BOT_RUNNER_IMAGE}
+    command: ["sleep", "infinity"]
+    restart: unless-stopped
 
   frontend:
     build:

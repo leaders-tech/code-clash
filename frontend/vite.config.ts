@@ -36,9 +36,9 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: "autoUpdate",
         manifest: {
-          name: "Template PWA",
-          short_name: "TemplatePWA",
-          description: "Small starter app for school projects.",
+          name: "Code Clash",
+          short_name: "CodeClash",
+          description: "Student bot tournament platform.",
           theme_color: "#0e1a2b",
           background_color: "#eff6ff",
           display: "standalone",

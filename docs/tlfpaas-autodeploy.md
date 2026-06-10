@@ -8,7 +8,7 @@ by this template.
 
 ## Current Deployment Shape
 
-`templatePWA` is a same-origin app with two public services:
+`Code Clash` is a same-origin app with two public services and one private bot sandbox image:
 
 - `frontend` serves the built React app through nginx on port `8080`;
 - `backend` serves JSON APIs and WebSocket on port `8081`;
@@ -16,6 +16,7 @@ by this template.
 - Caddy/tlfpaas routes everything else to `frontend`;
 - SQLite data lives under `/data` in the backend container;
 - `/data` is backed by the `sqlite_data` named volume.
+- bot execution uses Docker socket access from the backend container so untrusted code runs in the private sandbox runner image.
 
 The base `docker-compose.yml` is the production/tlfpaas-safe file. Local-only
 browser gateway behavior lives in `docker-compose.local.yml`.
@@ -39,7 +40,7 @@ Keep `docker-compose.yml` deploy-safe:
 - keep route-target labels as `tlfpaas.route: "frontend"` and `tlfpaas.route: "backend"`;
 - do not add raw `build.args`;
 - do not add Compose `user`;
-- do not add external networks or external volumes;
+- do not add external networks or external volumes, except the required `/var/run/docker.sock` mount for Code Clash bot execution;
 - do not add `privileged`, `network_mode`, `cap_add`, `devices`, `extra_hosts`, `secrets`, or `configs`;
 - do not add `caddy.*` labels;
 - do not add custom `tlfpaas.*` labels except `tlfpaas.route`.

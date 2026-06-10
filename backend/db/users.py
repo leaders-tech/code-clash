@@ -84,3 +84,19 @@ async def create_user_if_missing(db: aiosqlite.Connection, username: str, passwo
         (username, password_hash, int(is_admin), now, now),
     )
     await db.commit()
+
+
+async def create_user(db: aiosqlite.Connection, username: str, password_hash: str, is_admin: bool = False) -> dict[str, Any]:
+    now = utc_now_text()
+    cursor = await db.execute(
+        """
+        INSERT INTO users (username, password_hash, is_admin, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?)
+        RETURNING id, username, is_admin, created_at, updated_at
+        """,
+        (username, password_hash, int(is_admin), now, now),
+    )
+    user = row_to_user(await cursor.fetchone())
+    await cursor.close()
+    await db.commit()
+    return user

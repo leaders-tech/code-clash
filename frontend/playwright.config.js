@@ -27,8 +27,8 @@ var frontendPort = requireEnv("E2E_FRONTEND_PORT");
 var backendUrl = "http://".concat(backendHost, ":").concat(backendPort);
 var frontendUrl = "http://".concat(frontendHost, ":").concat(frontendPort);
 var dbDir = ((_a = process.env.E2E_DB_DIR) === null || _a === void 0 ? void 0 : _a.trim()) || os.tmpdir();
-var dbPath = ((_b = process.env.E2E_DB_PATH) === null || _b === void 0 ? void 0 : _b.trim()) || path.join(dbDir, "templatepwa-e2e-".concat(Date.now(), "-").concat(process.pid, ".sqlite3"));
-var uvCacheDir = path.join(os.tmpdir(), "templatepwa-uv-cache");
+var dbPath = ((_b = process.env.E2E_DB_PATH) === null || _b === void 0 ? void 0 : _b.trim()) || path.join(dbDir, "code-clash-e2e-".concat(Date.now(), "-").concat(process.pid, ".sqlite3"));
+var uvCacheDir = path.join(os.tmpdir(), "code-clash-uv-cache");
 export default defineConfig({
     testDir: "./tests/e2e",
     use: {
@@ -46,6 +46,8 @@ export default defineConfig({
                 APP_PORT: backendPort,
                 DB_PATH: dbPath,
                 COOKIE_SECRET: requireEnv("E2E_COOKIE_SECRET"),
+                ADMIN_USERNAME: "admin",
+                ADMIN_PASSWORD: "admin",
                 FRONTEND_ORIGIN: frontendUrl,
                 UV_CACHE_DIR: uvCacheDir,
             },

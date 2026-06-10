@@ -6,8 +6,11 @@ Do not copy this file. Change it when the whole backend app boot flow changes.
 
 from __future__ import annotations
 
-from aiohttp import web
+import asyncio
+import contextlib
+import logging
 
+from aiohttp import web
 from backend.auth.routes import setup_auth_routes
 from backend.config import Settings, load_settings, validate_settings
 from backend.db.connection import open_db
@@ -15,6 +18,8 @@ from backend.db.migrations import run_migrations
 from backend.db.seed import seed_dev_data
 from backend.http.middleware import cors_middleware, error_middleware
 from backend.http.routes import setup_api_routes
+from backend.matches.executor import scheduler_loop
+from backend.runner import DockerBotRunner, ScriptedBotRunner
 from backend.ws.hub import WebSocketHub
 from backend.ws.routes import setup_ws_routes
 
@@ -24,20 +29,33 @@ async def on_startup(app: web.Application) -> None:
     run_migrations(settings.db_path, settings.migrations_path)
     app["db"] = await open_db(settings.db_path)
     await seed_dev_data(app["db"], settings)
+    if "bot_runner" not in app:
+        app["bot_runner"] = DockerBotRunner(settings)
+    if not app.get("disable_scheduler", False):
+        app["scheduler_task"] = asyncio.create_task(scheduler_loop(app))
 
 
 async def on_cleanup(app: web.Application) -> None:
+    scheduler_task = app.get("scheduler_task")
+    if scheduler_task is not None:
+        scheduler_task.cancel()
+        with contextlib.suppress(asyncio.CancelledError):
+            await scheduler_task
     db = app.get("db")
     if db is not None:
         await db.close()
 
 
 def create_app(settings: Settings | None = None) -> web.Application:
+    logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s %(message)s")
     app = web.Application(middlewares=[error_middleware, cors_middleware])
     resolved_settings = settings or load_settings()
     validate_settings(resolved_settings)
     app["settings"] = resolved_settings
     app["ws_hub"] = WebSocketHub()
+    if resolved_settings.mode == "test":
+        app["disable_scheduler"] = True
+        app["bot_runner"] = ScriptedBotRunner()
 
     setup_auth_routes(app)
     setup_api_routes(app)

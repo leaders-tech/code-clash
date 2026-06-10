@@ -12,7 +12,16 @@ vi.mock("../pages/DashboardPage", () => ({
 }));
 
 vi.mock("../pages/AdminPage", () => ({
-  AdminPage: () => <h2>Admin page</h2>,
+  AdminPage: () => <h2>Admin</h2>,
+}));
+vi.mock("../pages/BotsPage", () => ({
+  BotsPage: () => <h2>Bots</h2>,
+}));
+vi.mock("../pages/TournamentsPage", () => ({
+  TournamentsPage: () => <h2>Tournaments</h2>,
+}));
+vi.mock("../pages/ReplayPage", () => ({
+  ReplayPage: () => <h2>Replay</h2>,
 }));
 
 import { render, screen } from "@testing-library/react";
@@ -37,6 +46,7 @@ function renderApp(path: string, user: User | null) {
           user,
           loading: false,
           login: vi.fn(),
+          register: vi.fn(),
           logout: vi.fn(),
           reloadUser: vi.fn(),
         }}

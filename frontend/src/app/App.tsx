@@ -1,54 +1,62 @@
 /*
-This file builds the main frontend layout, routes, and route guards.
-Edit this file when top-level pages, navigation, or auth guard behavior changes.
-Copy the route pattern here when you add another top-level page.
+This file builds the main Code Clash layout, routes, and route guards.
+Edit this file when top-level pages, navigation, or auth guards change.
+Copy the route pattern here when adding another top-level page.
 */
 
 import { NavLink, Navigate, Route, Routes } from "react-router-dom";
 import { useAuth } from "./auth";
-import { HomePage } from "../pages/HomePage";
-import { LoginPage } from "../pages/LoginPage";
-import { DashboardPage } from "../pages/DashboardPage";
 import { AdminPage } from "../pages/AdminPage";
+import { BotsPage } from "../pages/BotsPage";
+import { DashboardPage } from "../pages/DashboardPage";
+import { LoginPage } from "../pages/LoginPage";
+import { ReplayPage } from "../pages/ReplayPage";
+import { TournamentsPage } from "../pages/TournamentsPage";
 
 function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout } = useAuth();
 
   return (
-    <div className="min-h-screen">
-      <header className="border-b border-slate-200/70 bg-white/70 backdrop-blur">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-4 px-4 py-4">
+    <div className="min-h-screen bg-slate-50 text-slate-950">
+      <header className="border-b border-slate-200 bg-white">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
           <div>
-            <h1 className="text-xl font-semibold text-slate-900">Template PWA</h1>
-            <p className="text-sm text-slate-600">Simple starter for school projects.</p>
+            <h1 className="text-xl font-semibold">Code Clash</h1>
+            <p className="text-sm text-slate-600">Bot tournaments for students.</p>
           </div>
-          <nav className="flex items-center gap-3 text-sm font-medium text-slate-700">
-            <NavLink className="rounded-full px-3 py-2 hover:bg-slate-100" to="/">
-              Home
-            </NavLink>
+          <nav className="flex flex-wrap items-center gap-2 text-sm font-medium">
             {user ? (
               <>
-                <NavLink className="rounded-full px-3 py-2 hover:bg-slate-100" to="/dashboard">
+                <NavLink className="px-3 py-2 hover:bg-slate-100" to="/dashboard">
                   Dashboard
                 </NavLink>
-                {user.is_admin && (
-                  <NavLink className="rounded-full px-3 py-2 hover:bg-slate-100" to="/admin">
+                <NavLink className="px-3 py-2 hover:bg-slate-100" to="/bots">
+                  Bots
+                </NavLink>
+                <NavLink className="px-3 py-2 hover:bg-slate-100" to="/tournaments">
+                  Tournaments
+                </NavLink>
+                <NavLink className="px-3 py-2 hover:bg-slate-100" to="/replay">
+                  Replay
+                </NavLink>
+                {user.is_admin ? (
+                  <NavLink className="px-3 py-2 hover:bg-slate-100" to="/admin">
                     Admin
                   </NavLink>
-                )}
-                <button className="rounded-full bg-slate-900 px-4 py-2 text-white" onClick={() => void logout()}>
+                ) : null}
+                <button className="bg-slate-900 px-3 py-2 text-white" onClick={() => void logout()}>
                   Logout
                 </button>
               </>
             ) : (
-              <NavLink className="rounded-full bg-slate-900 px-4 py-2 text-white" to="/login">
+              <NavLink className="bg-slate-900 px-3 py-2 text-white" to="/login">
                 Login
               </NavLink>
             )}
           </nav>
         </div>
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-8">{children}</main>
+      <main className="mx-auto max-w-6xl px-4 py-6">{children}</main>
     </div>
   );
 }
@@ -82,13 +90,37 @@ export function App() {
   return (
     <Layout>
       <Routes>
-        <Route path="/" element={<HomePage />} />
+        <Route path="/" element={<Navigate to="/dashboard" replace />} />
         <Route path="/login" element={<LoginPage />} />
         <Route
           path="/dashboard"
           element={
             <RequireAuth>
               <DashboardPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/bots"
+          element={
+            <RequireAuth>
+              <BotsPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/tournaments"
+          element={
+            <RequireAuth>
+              <TournamentsPage />
+            </RequireAuth>
+          }
+        />
+        <Route
+          path="/replay"
+          element={
+            <RequireAuth>
+              <ReplayPage />
             </RequireAuth>
           }
         />

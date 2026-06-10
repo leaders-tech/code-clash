@@ -3,9 +3,9 @@
 # Copy a config pattern here when you add another small shared Python tool setting.
 # Add new Python packages with `uv add` or `uv add --dev` instead of editing dependency lists by hand.
 [project]
-name = "templatepwa"
+name = "code-clash"
 version = "0.1.0"
-description = "Minimal PWA template with React, aiohttp, and SQLite"
+description = "Student bot tournament platform with React, aiohttp, and SQLite"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [

@@ -17,6 +17,7 @@ const anonymousValue = {
   user: null,
   loading: false,
   login: vi.fn().mockResolvedValue(undefined),
+  register: vi.fn().mockResolvedValue(undefined),
   logout: vi.fn(),
   reloadUser: vi.fn(),
 };
@@ -59,7 +60,7 @@ describe("LoginPage", () => {
     await userEvent.type(usernameInput, "admin");
     await userEvent.clear(passwordInput);
     await userEvent.type(passwordInput, "admin");
-    await userEvent.click(screen.getByRole("button", { name: "Login" }));
+    await userEvent.click(screen.getAllByRole("button", { name: "Login" })[1]);
 
     expect(login).toHaveBeenCalledWith("admin", "admin");
   });
