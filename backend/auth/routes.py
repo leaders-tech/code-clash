@@ -12,11 +12,11 @@ from typing import Any
 from aiohttp import web
 
 from backend.auth.access import require_user
-from backend.auth.passwords import verify_password
+from backend.auth.passwords import hash_password, verify_password
 from backend.auth.tokens import build_access_token, create_refresh_token_pair, hash_refresh_token
 from backend.config import Settings
 from backend.db.refresh_sessions import create_session, delete_session, get_session, rotate_session
-from backend.db.users import get_user_by_id, get_user_by_username, row_to_user
+from backend.db.users import create_user, get_user_by_id, get_user_by_username, row_to_user, user_exists
 from backend.http.json_api import AppError, ok, read_json
 from backend.http.middleware import require_allowed_origin
 
@@ -85,6 +85,30 @@ async def login(request: web.Request) -> web.Response:
     return response
 
 
+async def register(request: web.Request) -> web.Response:
+    require_allowed_origin(request)
+    payload = await read_json(request)
+    username = str(payload.get("username", "")).strip()
+    password = str(payload.get("password", ""))
+    if len(username) < 3 or len(username) > 32 or not username.replace("_", "").replace("-", "").isalnum():
+        raise AppError(400, "bad_request", "Username must be 3-32 letters, numbers, dashes, or underscores.")
+    if len(password) < 6:
+        raise AppError(400, "bad_request", "Password must be at least 6 characters.")
+
+    db = request.app["db"]
+    settings: Settings = request.app["settings"]
+    if await user_exists(db, username):
+        raise AppError(409, "username_taken", "Username is already taken.")
+
+    user = await create_user(db, username, hash_password(password), False)
+    session_id, raw_token = create_refresh_token_pair()
+    expires_at = (datetime.now(tz=UTC) + timedelta(seconds=settings.refresh_ttl_seconds)).isoformat(timespec="seconds")
+    await create_session(db, session_id, user["id"], hash_refresh_token(settings, raw_token), expires_at)
+    response = ok({"user": user}, status=201)
+    _set_auth_cookies(response, settings, user, f"{session_id}.{raw_token}")
+    return response
+
+
 async def refresh(request: web.Request) -> web.Response:
     require_allowed_origin(request)
     settings: Settings = request.app["settings"]
@@ -141,6 +165,7 @@ async def me(request: web.Request) -> web.Response:
 
 
 def setup_auth_routes(app: web.Application) -> None:
+    app.router.add_post("/api/auth/register", register)
     app.router.add_post("/api/auth/login", login)
     app.router.add_post("/api/auth/refresh", refresh)
     app.router.add_post("/api/auth/logout", logout)

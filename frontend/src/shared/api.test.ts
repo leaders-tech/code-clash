@@ -24,11 +24,11 @@ describe("shared api helper", () => {
     vi.stubGlobal("fetch", fetchMock);
 
     const { postJson } = await import("./api");
-    const data = await postJson<{ saved: boolean }>("/notes/list");
+    const data = await postJson<{ saved: boolean }>("/bots/list");
 
     expect(data).toEqual({ saved: true });
     expect(fetchMock).toHaveBeenCalledWith(
-      "/api/notes/list",
+      "/api/bots/list",
       expect.objectContaining({
         method: "POST",
         credentials: "include",

@@ -6,7 +6,7 @@ Copy fixture patterns here when you add another shared backend test helper.
 
 from __future__ import annotations
 
-from collections.abc import AsyncIterator, Awaitable, Callable
+from collections.abc import Awaitable, Callable
 from pathlib import Path
 
 import pytest

@@ -9,7 +9,7 @@ Copy a style pattern here when you add another shared global style block.
 :root {
   font-family: "Segoe UI", "Helvetica Neue", sans-serif;
   color: #0f172a;
-  background: radial-gradient(circle at top, rgba(111, 168, 255, 0.22), transparent 36%), linear-gradient(180deg, #eff6ff 0%, #f8fafc 52%, #e2e8f0 100%);
+  background: #f8fafc;
 }
 
 body {

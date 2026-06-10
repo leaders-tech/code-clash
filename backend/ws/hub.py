@@ -35,5 +35,13 @@ class WebSocketHub:
                 continue
             await ws.send_json(message)
 
+    async def broadcast(self, message: dict[str, object]) -> None:
+        for user_id, sockets in list(self._connections.items()):
+            for ws in list(sockets):
+                if ws.closed:
+                    self.remove(user_id, ws)
+                    continue
+                await ws.send_json(message)
+
     def count_for_user(self, user_id: int) -> int:
         return len(self._connections.get(user_id, ()))

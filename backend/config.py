@@ -26,6 +26,12 @@ class Settings:
     db_path: Path
     cookie_secret: str
     frontend_origin: str
+    admin_username: str = "admin"
+    admin_password: str = "admin"
+    bot_runner_mode: str = "docker"
+    bot_runner_url: str = "http://bot-runner:8090"
+    bot_runner_image: str = "code-clash-runner:local"
+    bot_runner_container_name: str = "code-clash-bot-runner"
     access_cookie_name: str = "template_access"
     refresh_cookie_name: str = "template_refresh"
     access_ttl_seconds: int = 2 * 60 * 60
@@ -71,6 +77,12 @@ def load_settings() -> Settings:
         db_path=db_path,
         cookie_secret=cookie_secret,
         frontend_origin=frontend_origin,
+        admin_username=os.getenv("ADMIN_USERNAME", "admin").strip(),
+        admin_password=os.getenv("ADMIN_PASSWORD", "admin" if mode == "dev" else ""),
+        bot_runner_mode=os.getenv("BOT_RUNNER_MODE", "docker").strip().lower(),
+        bot_runner_url=os.getenv("BOT_RUNNER_URL", "http://bot-runner:8090").strip().rstrip("/"),
+        bot_runner_image=os.getenv("BOT_RUNNER_IMAGE", "code-clash-runner:local").strip(),
+        bot_runner_container_name=os.getenv("BOT_RUNNER_CONTAINER_NAME", "code-clash-bot-runner").strip(),
     )
     validate_settings(settings)
     return settings
@@ -79,3 +91,11 @@ def load_settings() -> Settings:
 def validate_settings(settings: Settings) -> None:
     if settings.mode == "prod" and settings.cookie_secret == DEFAULT_COOKIE_SECRET:
         raise ValueError("Refusing to start in prod with the default COOKIE_SECRET. Set a real secret in .env or your deploy env.")
+    if settings.mode == "prod" and (not settings.admin_username or not settings.admin_password):
+        raise ValueError("Refusing to start in prod without ADMIN_USERNAME and ADMIN_PASSWORD.")
+    if not settings.admin_username:
+        raise ValueError("ADMIN_USERNAME is required.")
+    if settings.bot_runner_mode not in {"docker", "service"}:
+        raise ValueError("BOT_RUNNER_MODE must be docker or service.")
+    if settings.bot_runner_mode == "service" and not settings.bot_runner_url:
+        raise ValueError("BOT_RUNNER_URL is required when BOT_RUNNER_MODE=service.")

@@ -41,6 +41,17 @@ async def test_login_success_and_me(client, create_user, auth_headers) -> None:
 
 
 @pytest.mark.asyncio
+async def test_register_creates_user_and_session(client, auth_headers) -> None:
+    response = await client.post("/api/auth/register", json={"username": "new_user", "password": "secret1"}, headers=auth_headers)
+    assert response.status == 201
+    payload = await response.json()
+    assert payload["data"]["user"]["username"] == "new_user"
+
+    me_response = await client.post("/api/auth/me", json={})
+    assert me_response.status == 200
+
+
+@pytest.mark.asyncio
 async def test_login_invalid_credentials(client, create_user, auth_headers) -> None:
     await create_user("user", "user")
     response = await client.post("/api/auth/login", json={"username": "user", "password": "wrong"}, headers=auth_headers)
@@ -49,7 +60,7 @@ async def test_login_invalid_credentials(client, create_user, auth_headers) -> N
 
 @pytest.mark.asyncio
 async def test_requires_auth(client) -> None:
-    response = await client.post("/api/notes/list", json={})
+    response = await client.post("/api/bots/list", json={})
     assert response.status == 401
 
 
@@ -110,7 +121,7 @@ async def test_non_json_write_request_returns_400(client, create_user, auth_head
     await login(client, "user", "user", auth_headers)
 
     response = await client.post(
-        "/api/notes/save",
+        "/api/bots/create",
         data="text=bad",
         headers={"Origin": "http://127.0.0.1:5101", "Content-Type": "application/x-www-form-urlencoded"},
     )
@@ -184,7 +195,7 @@ async def test_logout_removes_refresh_session(client, create_user, auth_headers,
 
 
 @pytest.mark.asyncio
-async def test_dev_seed_only_creates_missing_users(tmp_path, monkeypatch) -> None:
+async def test_seed_creates_env_admin_only_once(tmp_path, monkeypatch) -> None:
     settings = Settings(
         mode="dev",
         host="127.0.0.1",
@@ -192,6 +203,8 @@ async def test_dev_seed_only_creates_missing_users(tmp_path, monkeypatch) -> Non
         db_path=tmp_path / "seed.sqlite3",
         cookie_secret="test-secret",
         frontend_origin="http://127.0.0.1:5101",
+        admin_username="boss",
+        admin_password="secret-password",
     )
     app = create_app(settings)
     calls: list[str] = []
@@ -204,11 +217,12 @@ async def test_dev_seed_only_creates_missing_users(tmp_path, monkeypatch) -> Non
 
     try:
         await on_startup(app)
-        assert calls == ["user", "admin"]
+        assert calls == ["secret-password"]
         await seed_dev_data(app["db"], settings)
         users = await list_users(app["db"])
-        assert [user["username"] for user in users] == ["user", "admin"]
-        assert calls == ["user", "admin"]
+        assert [user["username"] for user in users] == ["boss"]
+        assert users[0]["is_admin"] is True
+        assert calls == ["secret-password"]
     finally:
         await on_cleanup(app)
 

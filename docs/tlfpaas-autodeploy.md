@@ -8,14 +8,16 @@ by this template.
 
 ## Current Deployment Shape
 
-`templatePWA` is a same-origin app with two public services:
+`Code Clash` is a same-origin app with two public services and one private bot runner service:
 
 - `frontend` serves the built React app through nginx on port `8080`;
 - `backend` serves JSON APIs and WebSocket on port `8081`;
+- `bot-runner` compiles and runs bot processes on private port `8090`;
 - Caddy/tlfpaas routes `/api*` and `/ws*` to `backend`;
 - Caddy/tlfpaas routes everything else to `frontend`;
 - SQLite data lives under `/data` in the backend container;
 - `/data` is backed by the `sqlite_data` named volume.
+- bot execution is kept out of the backend process by sending compile/run requests to the private `bot-runner` container.
 
 The base `docker-compose.yml` is the production/tlfpaas-safe file. Local-only
 browser gateway behavior lives in `docker-compose.local.yml`.
@@ -30,6 +32,7 @@ browser gateway behavior lives in `docker-compose.local.yml`.
 | `.docker.env` | Local copy ignored by git. Do not commit real secrets. |
 | `frontend/Dockerfile` | Production frontend image. Final stage must run as non-root `nginx`. |
 | `backend/Dockerfile` | Production backend image. Final stage must run as non-root `app`. |
+| `runner/Dockerfile` | Private bot runner image. Final stage must run as non-root `runner`. |
 
 ## Base Compose Rules
 
@@ -96,6 +99,13 @@ Backend:
 - keep `USER app` in the final stage;
 - write persistent SQLite data under `/data`;
 - write temporary files only to `/tmp` or `/data`.
+
+Bot runner:
+
+- keep the private runner listening on `8090`;
+- do not add a `tlfpaas.route` label to `bot-runner`;
+- keep `USER runner` in the final stage;
+- keep bot compile and run work in temporary directories.
 
 Do not solve non-root runtime requirements by adding Compose `user`. tlfpaas
 rejects that field. Set `USER` in the Dockerfile final stage instead.
@@ -194,6 +204,7 @@ These values are part of the deployment contract:
 
 - frontend port: `8080`;
 - backend port: `8081`;
+- private bot-runner port: `8090`;
 - frontend API base path: `VITE_BACKEND_URL=/api`;
 - backend API route prefix: `/api/...`;
 - backend WebSocket path: `/ws`;
@@ -213,6 +224,7 @@ Before changing Docker-related files, confirm:
 - `docker-compose.yml` still has no Compose `user`;
 - public services use exactly one `expose` port;
 - private services have no `tlfpaas.route`;
+- `docker-compose.yml` does not mount `/var/run/docker.sock`;
 - final Dockerfile stages set non-root `USER`;
 - `.docker.env.example` contains no real secrets;
 - local Docker-only behavior remains in `docker-compose.local.yml`;
