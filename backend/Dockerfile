@@ -23,7 +23,10 @@ ENV PATH="/opt/venv/bin:${PATH}" \
 
 WORKDIR /app
 
-RUN groupadd --gid 10001 app && \
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends docker.io && \
+    rm -rf /var/lib/apt/lists/* && \
+    groupadd --gid 10001 app && \
     useradd --uid 10001 --gid 10001 --create-home --shell /usr/sbin/nologin app && \
     mkdir -p /data && \
     chown -R app:app /app /data
